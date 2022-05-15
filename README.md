@@ -35,7 +35,6 @@ CMD ./server
 ## 3.4
 
 Frontend size before 1.2GB and after 516MB
-Backend size before 1.07GB and after 779MB
 
 Dockerfile (Frontend)
 ```
@@ -47,6 +46,8 @@ RUN apt-get update && apt-get install -y curl && curl -sL https://deb.nodesource
 USER appuser
 CMD ["serve", "-s", "-l", "5000", "build"]
 ```
+
+Backend size before 1.07GB and after 779MB
 
 Dockerfile (Backend)
 ```
