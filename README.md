@@ -47,7 +47,7 @@ USER appuser
 CMD ["serve", "-s", "-l", "5000", "build"]
 ```
 
-Backend size before 1.07GB and after 779MB
+Backend size before 1.07GB and after 731MB
 
 Dockerfile (Backend)
 ```
@@ -55,7 +55,7 @@ FROM ubuntu:18.04
 EXPOSE 8080
 WORKDIR /usr/src/app
 COPY . .
-RUN apt-get update && apt-get install -y curl && curl -OL https://golang.org/dl/go1.16.7.linux-amd64.tar.gz && tar -C /usr/local -xvf go1.16.7.linux-amd64.tar.gz && export PATH=$PATH:/usr/local/go/bin && go build && useradd -m appuser
+RUN apt-get update && apt-get install -y curl && curl -OL https://golang.org/dl/go1.16.7.linux-amd64.tar.gz && tar -C /usr/local -xvf go1.16.7.linux-amd64.tar.gz && export PATH=$PATH:/usr/local/go/bin && go build && apt-get purge -y --auto-remove curl && rm -rf /var/lib/apt/lists/* && useradd -m appuser
 USER appuser
 CMD ./server
 ```
