@@ -59,3 +59,31 @@ RUN apt-get update && apt-get install -y curl && curl -OL https://golang.org/dl/
 USER appuser
 CMD ./server
 ```
+
+## 3.5
+
+Frontend size before 1.2GB and after 402MB
+
+Dockerfile (Frontend)
+```
+FROM node:16-alpine
+EXPOSE 5000
+WORKDIR /usr/src/app
+COPY . .
+RUN npm install && npm run build && npm install -g serve && addgroup -S appgroup && adduser -S appuser -G appgroup
+USER appuser
+CMD ["serve", "-s", "-l", "5000", "build"]
+```
+
+Backend size before 1.07GB and after 447MB
+
+Dockerfile (Backend)
+```
+FROM golang:1.16-alpine
+EXPOSE 8080
+WORKDIR /usr/src/app
+COPY . .
+RUN go build && addgroup -S appgroup && adduser -S appuser -G appgroup
+USER appuser
+CMD ./server
+```
