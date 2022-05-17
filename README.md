@@ -87,3 +87,42 @@ RUN go build && addgroup -S appgroup && adduser -S appuser -G appgroup
 USER appuser
 CMD ./server
 ```
+
+## 3.6 part 1
+
+Frontend size 122MB
+
+Dockerfile (Frontend)
+```
+FROM node:16-alpine as build-stage
+WORKDIR /usr/src/app
+COPY . .
+RUN npm install && npm run build && addgroup -S appgroup && adduser -S appuser -G appgroup
+USER appuser
+
+FROM node:16-alpine
+EXPOSE 5000
+WORKDIR /usr/src/app
+COPY --from=build-stage /usr/src/app/build /usr/src/app/build
+RUN npm install -g serve
+CMD ["serve", "-s", "-l", "5000", "build"]
+```
+
+## 3.6 part 2
+
+Backend size 18MB
+
+Dockerfile (Backend)
+```
+FROM golang:1.16-alpine AS build-stage
+WORKDIR /usr/src/app
+COPY . .
+RUN CGO_ENABLED=0 go build && addgroup -S appgroup && adduser -S appuser -G appgroup
+USER appuser
+
+FROM scratch
+EXPOSE 8080
+WORKDIR /usr/src/app
+COPY --from=build-stage /usr/src/app/server /server
+CMD ["/server"]
+```
