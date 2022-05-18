@@ -97,14 +97,14 @@ Dockerfile (Frontend)
 FROM node:16-alpine as build-stage
 WORKDIR /usr/src/app
 COPY . .
-RUN npm install && npm run build && addgroup -S appgroup && adduser -S appuser -G appgroup
-USER appuser
+RUN npm install && npm run build
 
 FROM node:16-alpine
 EXPOSE 5000
 WORKDIR /usr/src/app
 COPY --from=build-stage /usr/src/app/build /usr/src/app/build
-RUN npm install -g serve
+RUN npm install -g serve && addgroup -S appgroup && adduser -S appuser -G appgroup
+USER appuser
 CMD ["serve", "-s", "-l", "5000", "build"]
 ```
 
@@ -118,12 +118,13 @@ FROM golang:1.16-alpine AS build-stage
 WORKDIR /usr/src/app
 COPY . .
 RUN CGO_ENABLED=0 go build && addgroup -S appgroup && adduser -S appuser -G appgroup
-USER appuser
 
 FROM scratch
 EXPOSE 8080
 WORKDIR /usr/src/app
 COPY --from=build-stage /usr/src/app/server /server
+COPY --from=build-stage /etc/passwd /etc/passwd
+USER appuser
 CMD ["/server"]
 ```
 
