@@ -133,7 +133,7 @@ I selected ml-frontend from part 2.
 
 File size before 1.1GB
 
-Dockerfile before
+Dockerfile
 ```
 FROM node:12.16.2
 
@@ -153,7 +153,7 @@ CMD ["serve", "-s", "-l", "3000", "build"]
 
 File size after 97.5MB
 
-Dockerfile after
+Dockerfile
 ```
 FROM node:12.16.2-alpine as build-stage
 WORKDIR /usr/src/app
