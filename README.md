@@ -126,3 +126,45 @@ WORKDIR /usr/src/app
 COPY --from=build-stage /usr/src/app/server /server
 CMD ["/server"]
 ```
+
+## 3.7
+
+I selected ml-frontend from part 2.
+
+File size before 1.1GB
+
+Dockerfile before
+```
+FROM node:12.16.2
+
+WORKDIR /usr/src/app
+
+COPY . .
+
+RUN npm ci
+
+RUN npm run build
+RUN npm install -g serve
+
+EXPOSE 3000
+
+CMD ["serve", "-s", "-l", "3000", "build"]
+```
+
+File size after 97.5MB
+
+Dockerfile after
+```
+FROM node:12.16.2-alpine as build-stage
+WORKDIR /usr/src/app
+COPY . .
+RUN npm ci && npm run build
+
+FROM node:12.16.2-alpine
+WORKDIR /usr/src/app
+COPY --from=build-stage /usr/src/app/build /usr/src/app/build
+RUN npm install -g serve && addgroup -S appgroup && adduser -S appuser -G appgroup
+USER appuser
+EXPOSE 3000
+CMD ["serve", "-s", "-l", "3000", "build"]
+```
